@@ -10,9 +10,15 @@ public class CameraController : MonoBehaviour {
 	public float mouseSensitivityx = 10f;
 	public float mouseSensitivityy = 5f;
 	public float mouseSensitivityz = 1f;
+	public bool hideMouse = false;
 
 	// Use this for initialization
 	void Start () {
+		if (!Application.isEditor || hideMouse)
+		{
+			Cursor.visible = false;
+			Cursor.lockState = CursorLockMode.Locked;
+		}
 		Vector3 cameraPosition = LifeController.XYZDimensions;
 		cameraPosition = cameraPosition * LifeController.cellSpacing;
 		cameraPosition = cameraPosition * 0.5f;

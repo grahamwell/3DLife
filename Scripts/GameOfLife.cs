@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-using UnityEngine.Jobs;
-using Unity.Collections;
-using Unity.Jobs;
-using Unity.Burst;
+
+// TODO:  All the burst and jobs stuff
+//using UnityEngine.Jobs;
+//using Unity.Collections;
+//using Unity.Jobs;
+//using Unity.Burst;
 
 
 public class Coords {
@@ -58,8 +60,6 @@ public class GameOfLife : MonoBehaviour
 	public AnimationCurve limitCurve;
 	public int blockCountMultiplier = 1000;
 	public int neigbourLimitMultiplier = 10;
-
-
 	[Space]
 	[Header("Random Spawn")]
 	public bool randomSpawn = false;
@@ -76,7 +76,6 @@ public class GameOfLife : MonoBehaviour
 	[Space]
 	private bool state = false;
 	private bool updating = false;
-
 	[Space]
 	[Header("Diagnostics")]
 	public bool running = false;
@@ -87,9 +86,7 @@ public class GameOfLife : MonoBehaviour
 	private int npoint = 0;
                 
 	void updateArrays() {
-		//for (int i = 0; i <= 1000; i++) {
-		//	Debug.LogWarning(i.ToString()+"<>"+nextMap[i].ToString());
-		//}
+		
 		byte oldvis = 0;
 		byte newvis = 0;
 		int apoint = 0;
@@ -102,8 +99,10 @@ public class GameOfLife : MonoBehaviour
 					newvis = (byte)(nextMap[apoint] & 0x01);
 					if (oldvis != newvis) {
 						if (cellArray[x,y,z] == null) {
+							// instantiate the block
 							cellArray[x,y,z] = new Cell(x,y,z,newvis);
 						} else {
+							// just switch it on or off
 							cellArray[x,y,z].Show(newvis);
 						}
 						if (newvis ==1) blockCount++;
@@ -112,19 +111,11 @@ public class GameOfLife : MonoBehaviour
 				}
 			}
 		}
-		
-		// This seems to produce different results ?????  Really doesn't work properly
-		//Array.Copy(nextMap,baseMap,XYZInt.X*XYZInt.Y*XYZInt.Z);
 	}
 
 	void Setup()
 	{
-		if (!Application.isEditor || hideMouse)
-		{
-			Cursor.visible = false;
-			Cursor.lockState = CursorLockMode.Locked;
-		}
-	
+		
 		Cell.ObjectToInstatiate = cell;
 		Cell.scalefactor = cellSpacing;
 		Cell.parent = gameObject;
@@ -150,7 +141,7 @@ public class GameOfLife : MonoBehaviour
 					baseMap[ArrayPointer] = 0;
 					nextMap[ArrayPointer] = 0;
 					if (cellArray[x,y,z] != null) {cellArray[x,y,z].Show(0);}
-					//cellArray[x,y,z] = new Cell(x,y,z,0);  
+					// cells now instantiated only when needed
 				}                                              
 			}
 		}
@@ -162,9 +153,7 @@ public class GameOfLife : MonoBehaviour
 		updateArrays();
 		
 	}
-	void Set(int whichOne) {
-		nextMap[whichOne] = 1;
-	}
+	
 	void Set(byte xpos,byte ypos, byte zpos) {
 		npoint = (xpos << 16) + (ypos << 8) + zpos;
 		nextMap[npoint] |= 1;
@@ -182,9 +171,7 @@ public class GameOfLife : MonoBehaviour
 			}
 		}
 	}
-	void Clear(int whichOne) {
-		nextMap[whichOne] = 0;
-	}
+	
 	void Clear(byte xpos, byte ypos, byte zpos) {
 		npoint = (xpos << 16) + (ypos << 8) + zpos;
 		nextMap[npoint] &= 0xFE;
@@ -212,10 +199,12 @@ public class GameOfLife : MonoBehaviour
 		byte x = (byte)(XYZInt.X/2);
 		byte y = (byte)(XYZInt.Y/2);
 		byte z = (byte)(XYZInt.Z/2);
+		// simple four square
 		Set(x,y,z);
 		Set(x,(byte)(y+1),z);
 		Set(x,y,(byte)(z+1));
 		Set(x,(byte)(y+1),(byte)(z+1));
+		// Uncomment for basic glider
 		//Set((byte)(x+1),(byte)(y+2),(byte)(z));
 		//Set((byte)(x+1),(byte)(y+2),(byte)(z+1));
 		//Set((byte)(x+1),(byte)(y-1),(byte)(z));
@@ -272,10 +261,13 @@ public class GameOfLife : MonoBehaviour
 			}
 		}
 		updateArrays();
-		float nl = limitCurve.Evaluate((float)blockCount/(float)blockCountMultiplier);
 		
+		// Make life tougher when overpopulation starts
+		float nl = limitCurve.Evaluate((float)blockCount/(float)blockCountMultiplier);
 		neighbourLimit = (int)(nl* neigbourLimitMultiplier);
 		if (neighbourLimit < 1) {neighbourLimit = 1;}
+		
+		// delay 
 		if (waitInterval > 1) {
 			yield return new WaitForSeconds(waitInterval/100);
 		}
