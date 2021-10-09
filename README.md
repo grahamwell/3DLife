@@ -1,15 +1,15 @@
 # 3DLife
 3D Life in Unity
 
-You just need the GameOfLife Script
+You just need the GameOfLife Script.
 
 Start an empty 3D project with directional light and camera.
 
 Add an empty GameObject and attach the Game Of Life script.
-Add a cube, scale it to 0.1 on all axes and make it a prefab
+Add a cube, scale it to 0.1 on all axes and make it a prefab.
 Drag that prefab to the first slot in the script (Cell).
 
-Dimensions can be up to 255 on all three axes .. more is slower
+Dimensions can be up to 255 on all three axes .. more is slower.
 Cell spacing should be about 0.1
 
 The Limit curve allows the rules to change slightly to limit overpopulation.
