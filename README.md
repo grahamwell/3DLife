@@ -2,6 +2,7 @@
 3D Life in Unity
 
 You just need the GameOfLife Script
+
 Start an empty 3D project with directional light and camera.
 
 Add an empty GameObject and attach the Game Of Life script.
