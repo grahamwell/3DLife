@@ -26,6 +26,8 @@ If it's not switched on then you just get an initial foursquare, which is enough
 The wait interval can be altered at runtime with the + and - keypad keys, set to 8 
 to begin with.
 
+Press space to start and stop. If stopped, clicking the mouse advances one generation.
+
 The camera script allows panning and zooming but is pretty basic.  It needs
 two empty gameobjects in the centre of the scene, one a child of the other. 
 The child is the up/down gimbal, the parent holds the camera script.  The camera
